@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/awesome-skill/zentao/cmd/zentao/cmd"
+	"github.com/pangu-studio/zentao/cmd/zentao/cmd"
 )
 
 func main() {

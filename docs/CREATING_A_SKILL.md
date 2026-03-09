@@ -29,7 +29,7 @@ Replace the following placeholder values throughout the project:
 | Placeholder | Replace With | Example |
 |------------|--------------|---------|
 | `zentao` | Your skill name (lowercase) | `weatherapi` |
-| `github.com/awesome-skill/zentao` | Your Go module path | `github.com/yourname/weatherapi` |
+| `github.com/pangu-studio/zentao` | Your Go module path | `github.com/yourname/weatherapi` |
 | `api.example.com` | Your default API host | `api.weatherapi.com` |
 
 ### Files to Update
@@ -55,7 +55,7 @@ Replace the following placeholder values throughout the project:
    ```
 
 4. **All import statements**
-   - Update all imports from `github.com/awesome-skill/zentao` to your module path
+   - Update all imports from `github.com/pangu-studio/zentao` to your module path
    - Find and replace across all `.go` files
 
 5. **Makefile**

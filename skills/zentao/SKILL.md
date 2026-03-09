@@ -216,7 +216,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 <!-- TODO: Add acknowledgments -->
 
 - Built with [Cobra](https://github.com/spf13/cobra)
-- Template from [awesome-skill/template](https://github.com/awesome-skill/zentao)
+- Template from [pangu-studio/zentao](https://github.com/pangu-studio/zentao)
 
 ## Support
 

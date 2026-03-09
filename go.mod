@@ -1,4 +1,4 @@
-module github.com/awesome-skill/zentao
+module github.com/pangu-studio/zentao
 
 go 1.25.5
 

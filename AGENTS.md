@@ -18,7 +18,7 @@ Code, comments within code files, commit messages, and technical documentation s
 
 **Project**: CLI Skill Development Template  
 **Language**: Go 1.25.5  
-**Module**: `github.com/awesome-skill/zentao`  
+**Module**: `github.com/pangu-studio/zentao`  
 **Framework**: [Cobra](https://github.com/spf13/cobra) for CLI, [Testify](https://github.com/stretchr/testify) for testing
 
 This is a template for building command-line skills with configuration management, output formatters, and comprehensive testing.
@@ -100,7 +100,7 @@ import (
     "github.com/stretchr/testify/assert"
 
     // 3. Internal packages
-    "github.com/awesome-skill/zentao/internal/config"
+    "github.com/pangu-studio/zentao/internal/config"
 )
 ```
 

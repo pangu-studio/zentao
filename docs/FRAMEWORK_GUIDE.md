@@ -27,7 +27,7 @@ The configuration system provides a flexible way to manage application settings 
 ### Basic Usage
 
 ```go
-import "github.com/awesome-skill/zentao/internal/config"
+import "github.com/pangu-studio/zentao/internal/config"
 
 // Load configuration
 cfg, err := config.Load()
@@ -192,7 +192,7 @@ The output formatting system provides multiple output formats for displaying dat
 ```go
 import (
     "os"
-    "github.com/awesome-skill/zentao/internal/output"
+    "github.com/pangu-studio/zentao/internal/output"
 )
 
 // Create formatter based on format string

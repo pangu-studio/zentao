@@ -29,7 +29,7 @@ This template provides a complete foundation for creating command-line skills wi
 
 ```bash
 # Clone this template
-git clone https://github.com/awesome-skill/zentao.git my-new-skill
+git clone https://github.com/pangu-studio/zentao.git my-new-skill
 cd my-new-skill
 
 # Initialize your skill

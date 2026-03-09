@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/awesome-skill/zentao/internal/config"
+	"github.com/pangu-studio/zentao/internal/config"
 	"github.com/spf13/cobra"
 )
 
