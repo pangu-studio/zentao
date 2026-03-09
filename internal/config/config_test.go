@@ -1,0 +1,418 @@
+package config
+
+import (
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestLoad_FromEnv(t *testing.T) {
+	// Arrange
+	expectedKey := "test-api-key-from-env"
+	os.Setenv("MYSKILL_API_KEY", expectedKey)
+	defer os.Unsetenv("MYSKILL_API_KEY")
+
+	// Act
+	config, err := Load()
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, expectedKey, config.API.APIKey)
+	assert.Equal(t, "api.example.com", config.API.APIHost)
+}
+
+func TestLoad_CustomAPIHost(t *testing.T) {
+	// Arrange
+	expectedKey := "test-api-key"
+	expectedHost := "api.production.com"
+	os.Setenv("MYSKILL_API_KEY", expectedKey)
+	os.Setenv("MYSKILL_API_HOST", expectedHost)
+	defer os.Unsetenv("MYSKILL_API_KEY")
+	defer os.Unsetenv("MYSKILL_API_HOST")
+
+	// Act
+	config, err := Load()
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, expectedKey, config.API.APIKey)
+	assert.Equal(t, expectedHost, config.API.APIHost)
+}
+
+func TestLoad_FromFile(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	require.NoError(t, os.MkdirAll(configDir, 0755))
+
+	expectedKey := "test-api-key-from-file"
+	apiKeyFile := filepath.Join(configDir, "api_key")
+	require.NoError(t, os.WriteFile(apiKeyFile, []byte(expectedKey+"\n"), 0600))
+
+	// Override HOME for testing
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	// Ensure no env var interferes
+	os.Unsetenv("MYSKILL_API_KEY")
+
+	// Act
+	config, err := Load()
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, expectedKey, config.API.APIKey)
+}
+
+func TestLoad_FileWithWhitespace(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	require.NoError(t, os.MkdirAll(configDir, 0755))
+
+	expectedKey := "test-api-key-trimmed"
+	apiKeyFile := filepath.Join(configDir, "api_key")
+	// Add whitespace and newlines
+	require.NoError(t, os.WriteFile(apiKeyFile, []byte("  "+expectedKey+"  \n\n"), 0600))
+
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	os.Unsetenv("MYSKILL_API_KEY")
+
+	// Act
+	config, err := Load()
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, expectedKey, config.API.APIKey)
+}
+
+func TestLoad_EnvPriority(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	require.NoError(t, os.MkdirAll(configDir, 0755))
+
+	fileKey := "file-key"
+	envKey := "env-key"
+
+	apiKeyFile := filepath.Join(configDir, "api_key")
+	require.NoError(t, os.WriteFile(apiKeyFile, []byte(fileKey), 0600))
+
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	os.Setenv("MYSKILL_API_KEY", envKey)
+	defer os.Unsetenv("MYSKILL_API_KEY")
+
+	// Act
+	config, err := Load()
+
+	// Assert - environment variable should take priority
+	require.NoError(t, err)
+	assert.Equal(t, envKey, config.API.APIKey)
+}
+
+func TestLoad_NoAPIKey(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	os.Unsetenv("MYSKILL_API_KEY")
+
+	// Act
+	config, err := Load()
+
+	// Assert
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "API API key not found")
+	assert.Nil(t, config)
+}
+
+func TestLoad_EmptyAPIKeyFile(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	require.NoError(t, os.MkdirAll(configDir, 0755))
+
+	apiKeyFile := filepath.Join(configDir, "api_key")
+	require.NoError(t, os.WriteFile(apiKeyFile, []byte("   \n  \n"), 0600))
+
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	os.Unsetenv("MYSKILL_API_KEY")
+
+	// Act
+	config, err := Load()
+
+	// Assert
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "API key file is empty")
+	assert.Nil(t, config)
+}
+
+func TestLoad_XDGConfigHome(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	xdgConfig := filepath.Join(tmpDir, "custom-config")
+	configDir := filepath.Join(xdgConfig, "awesome-skill", "myskill")
+	require.NoError(t, os.MkdirAll(configDir, 0755))
+
+	expectedKey := "test-xdg-key"
+	apiKeyFile := filepath.Join(configDir, "api_key")
+	require.NoError(t, os.WriteFile(apiKeyFile, []byte(expectedKey), 0600))
+
+	os.Setenv("XDG_CONFIG_HOME", xdgConfig)
+	defer os.Unsetenv("XDG_CONFIG_HOME")
+
+	os.Unsetenv("MYSKILL_API_KEY")
+
+	// Act
+	config, err := Load()
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, expectedKey, config.API.APIKey)
+}
+
+func TestEnsureConfigDir(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	// Act
+	err := EnsureConfigDir()
+
+	// Assert
+	require.NoError(t, err)
+
+	// Verify directory exists
+	expectedDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	info, err := os.Stat(expectedDir)
+	require.NoError(t, err)
+	assert.True(t, info.IsDir())
+
+	// Verify permissions
+	assert.Equal(t, os.FileMode(0755), info.Mode().Perm())
+}
+
+func TestEnsureConfigDir_AlreadyExists(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	require.NoError(t, os.MkdirAll(configDir, 0755))
+
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	// Act
+	err := EnsureConfigDir()
+
+	// Assert - should not error if directory already exists
+	require.NoError(t, err)
+}
+
+func TestEnsureConfigDir_XDGConfigHome(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	xdgConfig := filepath.Join(tmpDir, "custom-config")
+
+	os.Setenv("XDG_CONFIG_HOME", xdgConfig)
+	defer os.Unsetenv("XDG_CONFIG_HOME")
+
+	// Act
+	err := EnsureConfigDir()
+
+	// Assert
+	require.NoError(t, err)
+
+	// Verify directory exists in XDG location
+	expectedDir := filepath.Join(xdgConfig, "awesome-skill", "myskill")
+	info, err := os.Stat(expectedDir)
+	require.NoError(t, err)
+	assert.True(t, info.IsDir())
+}
+
+func TestLoad_APIHostFromFile(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	require.NoError(t, os.MkdirAll(configDir, 0755))
+
+	expectedKey := "test-api-key"
+	expectedHost := "api.myskill.com"
+
+	apiKeyFile := filepath.Join(configDir, "api_key")
+	require.NoError(t, os.WriteFile(apiKeyFile, []byte(expectedKey), 0600))
+
+	apiHostFile := filepath.Join(configDir, "api_host")
+	require.NoError(t, os.WriteFile(apiHostFile, []byte(expectedHost), 0600))
+
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	os.Unsetenv("MYSKILL_API_KEY")
+	os.Unsetenv("MYSKILL_API_HOST")
+
+	// Act
+	config, err := Load()
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, expectedKey, config.API.APIKey)
+	assert.Equal(t, expectedHost, config.API.APIHost)
+}
+
+func TestLoad_APIHostEnvPriority(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	require.NoError(t, os.MkdirAll(configDir, 0755))
+
+	expectedKey := "test-api-key"
+	envHost := "env-api-host.com"
+	fileHost := "file-api-host.com"
+
+	apiKeyFile := filepath.Join(configDir, "api_key")
+	require.NoError(t, os.WriteFile(apiKeyFile, []byte(expectedKey), 0600))
+
+	apiHostFile := filepath.Join(configDir, "api_host")
+	require.NoError(t, os.WriteFile(apiHostFile, []byte(fileHost), 0600))
+
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	os.Unsetenv("MYSKILL_API_KEY")
+	os.Setenv("MYSKILL_API_HOST", envHost)
+	defer os.Unsetenv("MYSKILL_API_HOST")
+
+	// Act
+	config, err := Load()
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, expectedKey, config.API.APIKey)
+	assert.Equal(t, envHost, config.API.APIHost)
+}
+
+func TestLoad_APIHostFilePriority(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	require.NoError(t, os.MkdirAll(configDir, 0755))
+
+	expectedKey := "test-api-key"
+	expectedHost := "file-api-host.com"
+
+	apiKeyFile := filepath.Join(configDir, "api_key")
+	require.NoError(t, os.WriteFile(apiKeyFile, []byte(expectedKey), 0600))
+
+	apiHostFile := filepath.Join(configDir, "api_host")
+	require.NoError(t, os.WriteFile(apiHostFile, []byte(expectedHost), 0600))
+
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	os.Unsetenv("MYSKILL_API_KEY")
+	os.Unsetenv("MYSKILL_API_HOST")
+
+	// Act
+	config, err := Load()
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, expectedKey, config.API.APIKey)
+	assert.Equal(t, expectedHost, config.API.APIHost)
+}
+
+func TestSetAPIKey(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	expectedKey := "test-api-key-to-set"
+
+	// Act
+	err := SetAPIKey(expectedKey)
+
+	// Assert
+	require.NoError(t, err)
+
+	apiKeyPath := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill", "api_key")
+	actualKey, err := os.ReadFile(apiKeyPath)
+	require.NoError(t, err)
+	assert.Equal(t, expectedKey, strings.TrimSpace(string(actualKey)))
+}
+
+func TestSetAPIHost(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	expectedHost := "api.myskill.com"
+
+	// Act
+	err := SetAPIHost(expectedHost)
+
+	// Assert
+	require.NoError(t, err)
+
+	apiHostPath := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill", "api_host")
+	actualHost, err := os.ReadFile(apiHostPath)
+	require.NoError(t, err)
+	assert.Equal(t, expectedHost, strings.TrimSpace(string(actualHost)))
+}
+
+func TestGetConfigDir(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	originalHome := os.Getenv("HOME")
+	os.Setenv("HOME", tmpDir)
+	defer os.Setenv("HOME", originalHome)
+
+	// Act
+	configDir, err := GetConfigDir()
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, filepath.Join(tmpDir, ".config", "awesome-skill"), configDir)
+}
+
+func TestGetConfigDir_XDG(t *testing.T) {
+	// Arrange
+	tmpDir := t.TempDir()
+	xdgConfig := filepath.Join(tmpDir, "custom-config")
+
+	os.Setenv("XDG_CONFIG_HOME", xdgConfig)
+	defer os.Unsetenv("XDG_CONFIG_HOME")
+
+	// Act
+	configDir, err := GetConfigDir()
+
+	// Assert
+	require.NoError(t, err)
+	assert.Equal(t, filepath.Join(xdgConfig, "awesome-skill"), configDir)
+}

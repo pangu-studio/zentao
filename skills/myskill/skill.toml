@@ -1,0 +1,150 @@
+# Skill Configuration Template
+# TODO: Replace placeholders with your actual values
+
+[skill]
+name = "{{SKILL_NAME}}"
+version = "0.1.0"
+description = "{{SHORT_DESCRIPTION}}"
+author = "{{AUTHOR_NAME}}"
+license = "GPL-3.0"
+homepage = "https://github.com/{{USERNAME}}/{{SKILL_NAME}}"
+repository = "https://github.com/{{USERNAME}}/{{SKILL_NAME}}.git"
+
+# Keywords for discovery
+keywords = ["cli", "tool", "api"]
+
+[skill.runtime]
+# Runtime type: "cli" for command-line tools
+type = "cli"
+
+# Primary command to execute
+command = "{{SKILL_NAME}}"
+
+# Minimum required version (if applicable)
+min_version = ""
+
+[skill.dependencies]
+# Go version requirement
+go = "1.20"
+
+# External CLI tools required (optional)
+# tools = ["curl", "jq"]
+
+[skill.config]
+# Whether API key is required
+api_key_required = true
+
+# Default API host
+default_api_host = "api.example.com"
+
+# Configuration directory (relative to ~/.config/awesome-skill/)
+config_path = "{{SKILL_NAME}}"
+
+# Environment variable prefix
+env_prefix = "{{SKILL_NAME_UPPER}}"
+
+[skill.config.fields]
+# Define configuration fields
+
+[[skill.config.fields.api_key]]
+name = "api_key"
+type = "string"
+required = true
+description = "API authentication key"
+env_var = "{{SKILL_NAME_UPPER}}_API_KEY"
+file = "api_key"
+
+[[skill.config.fields.api_host]]
+name = "api_host"
+type = "string"
+required = false
+description = "API endpoint host"
+env_var = "{{SKILL_NAME_UPPER}}_API_HOST"
+file = "api_host"
+default = "api.example.com"
+
+# Add more configuration fields as needed
+# [[skill.config.fields.timeout]]
+# name = "timeout"
+# type = "integer"
+# required = false
+# description = "Request timeout in seconds"
+# env_var = "{{SKILL_NAME_UPPER}}_TIMEOUT"
+# default = 30
+
+[skill.commands]
+# Define available commands
+
+[[skill.commands.config]]
+name = "config"
+description = "Manage configuration"
+subcommands = ["init", "set-api-key", "set-api-host"]
+
+[[skill.commands.example]]
+name = "example"
+description = "Example command"
+args = ["name"]
+flags = [
+    { name = "greeting", short = "g", type = "string", default = "Hello", description = "Greeting message" },
+]
+
+# Add your actual commands here
+# [[skill.commands.fetch]]
+# name = "fetch"
+# description = "Fetch data from API"
+# args = ["resource"]
+# flags = [
+#     { name = "format", short = "f", type = "string", default = "json", description = "Output format" }
+# ]
+
+[skill.output]
+# Supported output formats
+formats = ["text", "json", "table"]
+default_format = "text"
+
+[skill.build]
+# Build configuration
+binary_name = "{{SKILL_NAME}}"
+main_package = "./cmd/{{SKILL_NAME}}"
+
+# Build targets
+[[skill.build.targets]]
+os = "linux"
+arch = "amd64"
+
+[[skill.build.targets]]
+os = "linux"
+arch = "arm64"
+
+[[skill.build.targets]]
+os = "darwin"
+arch = "amd64"
+
+[[skill.build.targets]]
+os = "darwin"
+arch = "arm64"
+
+[[skill.build.targets]]
+os = "windows"
+arch = "amd64"
+
+[skill.documentation]
+# Documentation links
+readme = "README.md"
+skill_doc = "skills/{{SKILL_NAME}}/SKILL.md"
+framework_guide = "docs/FRAMEWORK_GUIDE.md"
+creation_guide = "docs/CREATING_A_SKILL.md"
+
+[skill.metadata]
+# Additional metadata
+created = "2026-03-09"
+updated = "2026-03-09"
+category = "utility"
+tags = ["cli", "api", "tool"]
+
+# Placeholders to replace:
+# {{SKILL_NAME}} - Your skill name (lowercase, e.g., "myapi")
+# {{SKILL_NAME_UPPER}} - Your skill name (uppercase, e.g., "MYAPI")
+# {{SHORT_DESCRIPTION}} - Brief description of your skill
+# {{AUTHOR_NAME}} - Your name or organization
+# {{USERNAME}} - Your GitHub username or organization
