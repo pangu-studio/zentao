@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/awesome-skill/template/cmd/myskill/cmd"
+	"github.com/awesome-skill/zentao/cmd/zentao/cmd"
 )
 
 func main() {

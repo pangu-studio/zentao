@@ -27,7 +27,7 @@ The configuration system provides a flexible way to manage application settings 
 ### Basic Usage
 
 ```go
-import "github.com/awesome-skill/template/internal/config"
+import "github.com/awesome-skill/zentao/internal/config"
 
 // Load configuration
 cfg, err := config.Load()
@@ -60,7 +60,7 @@ Environment variables are built from the skill name in uppercase:
 - `{SKILLNAME}_API_KEY` - API authentication key
 - `{SKILLNAME}_API_HOST` - API endpoint host
 
-For example, if `SkillName = "myskill"`:
+For example, if `SkillName = "zentao"`:
 
 - `MYSKILL_API_KEY`
 - `MYSKILL_API_HOST`
@@ -90,15 +90,15 @@ export MYSKILL_API_HOST="api.example.com"
 
 ```bash
 # Using the config command
-myskill config init --interactive
-myskill config set-api-key your-api-key
-myskill config set-api-host api.example.com
+zentao config init --interactive
+zentao config set-api-key your-api-key
+zentao config set-api-host api.example.com
 
 # Manual setup
-mkdir -p ~/.config/awesome-skill/myskill
-echo "your-api-key" > ~/.config/awesome-skill/myskill/api_key
-echo "api.example.com" > ~/.config/awesome-skill/myskill/api_host
-chmod 600 ~/.config/awesome-skill/myskill/api_key
+mkdir -p ~/.config/awesome-skill/zentao
+echo "your-api-key" > ~/.config/awesome-skill/zentao/api_key
+echo "api.example.com" > ~/.config/awesome-skill/zentao/api_host
+chmod 600 ~/.config/awesome-skill/zentao/api_key
 ```
 
 ### Customizing Configuration
@@ -192,7 +192,7 @@ The output formatting system provides multiple output formats for displaying dat
 ```go
 import (
     "os"
-    "github.com/awesome-skill/template/internal/output"
+    "github.com/awesome-skill/zentao/internal/output"
 )
 
 // Create formatter based on format string
@@ -292,14 +292,14 @@ func runMyCommand(cmd *cobra.Command, args []string) error {
 
 ## CLI Command Structure
 
-Location: `cmd/myskill/cmd/`
+Location: `cmd/zentao/cmd/`
 
 The CLI is built using [Cobra](https://github.com/spf13/cobra), a powerful library for building CLI applications.
 
 ### Command Structure
 
 ```
-myskill (root command)
+zentao (root command)
 ├── config (configuration management)
 │   ├── init (initialize configuration)
 │   ├── set-api-key (set API key)
@@ -309,7 +309,7 @@ myskill (root command)
 
 ### Root Command
 
-File: `cmd/myskill/cmd/root.go`
+File: `cmd/zentao/cmd/root.go`
 
 The root command provides:
 
@@ -319,7 +319,7 @@ The root command provides:
 
 ```go
 var rootCmd = &cobra.Command{
-    Use:   "myskill",
+    Use:   "zentao",
     Short: "Short description",
     Long:  `Long description`,
     Version: "0.1.0",
@@ -335,7 +335,7 @@ Available to all commands:
 
 ### Creating a New Command
 
-1. Create a new file: `cmd/myskill/cmd/mycommand.go`
+1. Create a new file: `cmd/zentao/cmd/mycommand.go`
 
 ```go
 package cmd
@@ -522,8 +522,8 @@ Edit Makefile variables:
 
 ```makefile
 BINARY_DIR := bin
-BINARIES := myskill
-BINARY_LINUX := myskill-linux-amd64
+BINARIES := zentao
+BINARY_LINUX := zentao-linux-amd64
 ```
 
 ### Cross-Compilation
@@ -532,13 +532,13 @@ Build for different platforms:
 
 ```bash
 # Linux AMD64
-GOOS=linux GOARCH=amd64 go build -o bin/myskill-linux-amd64 ./cmd/myskill
+GOOS=linux GOARCH=amd64 go build -o bin/zentao-linux-amd64 ./cmd/zentao
 
 # macOS ARM64
-GOOS=darwin GOARCH=arm64 go build -o bin/myskill-darwin-arm64 ./cmd/myskill
+GOOS=darwin GOARCH=arm64 go build -o bin/zentao-darwin-arm64 ./cmd/zentao
 
 # Windows AMD64
-GOOS=windows GOARCH=amd64 go build -o bin/myskill-windows-amd64.exe ./cmd/myskill
+GOOS=windows GOARCH=amd64 go build -o bin/zentao-windows-amd64.exe ./cmd/zentao
 ```
 
 ### Adding Build Targets
@@ -549,7 +549,7 @@ Add custom targets to Makefile:
 .PHONY: docker
 docker:
  @echo "Building Docker image..."
- docker build -t myskill:latest .
+ docker build -t zentao:latest .
 ```
 
 ---

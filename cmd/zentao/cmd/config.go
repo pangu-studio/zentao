@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/awesome-skill/template/internal/config"
+	"github.com/awesome-skill/zentao/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -16,15 +16,15 @@ var configCmd = &cobra.Command{
 	Long: `Manage API configuration.
 
 Configuration files are stored in:
-  $HOME/.config/awesome-skill/myskill/api_key   - API Key
-  $HOME/.config/awesome-skill/myskill/api_host  - API Host (optional)
+  $HOME/.config/awesome-skill/zentao/api_key   - API Key
+  $HOME/.config/awesome-skill/zentao/api_host  - API Host (optional)
 
 Priority order for API Key:
-  1. Environment variable MYSKILL_API_KEY
+  1. Environment variable ZENTAO_API_KEY
   2. Configuration file
 
 Priority order for API Host:
-  1. Environment variable MYSKILL_API_HOST
+  1. Environment variable ZENTAO_API_HOST
   2. Configuration file
   3. Default: api.example.com`,
 	RunE: runConfig,
@@ -36,8 +36,8 @@ var configInitCmd = &cobra.Command{
 	Long: `Initialize configuration directory and optionally set API key and host.
 
 Examples:
-  myskill config init
-  myskill config init --interactive`,
+  zentao config init
+  zentao config init --interactive`,
 	RunE: runConfigInit,
 }
 
@@ -47,10 +47,10 @@ var configSetAPIKeyCmd = &cobra.Command{
 	Long: `Set the API key.
 
 The API key will be saved to:
-  $HOME/.config/awesome-skill/myskill/api_key
+  $HOME/.config/awesome-skill/zentao/api_key
 
 Examples:
-  myskill config set-api-key your-api-key-here`,
+  zentao config set-api-key your-api-key-here`,
 	Args: cobra.ExactArgs(1),
 	RunE: runConfigSetAPIKey,
 }
@@ -61,10 +61,10 @@ var configSetAPIHostCmd = &cobra.Command{
 	Long: `Set the API host.
 
 The API host will be saved to:
-  $HOME/.config/awesome-skill/myskill/api_host
+  $HOME/.config/awesome-skill/zentao/api_host
 
 Examples:
-  myskill config set-api-host api.production.com`,
+  zentao config set-api-host api.production.com`,
 	Args: cobra.ExactArgs(1),
 	RunE: runConfigSetAPIHost,
 }
@@ -95,8 +95,8 @@ func runConfig(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		fmt.Printf("Status: Not configured\n\n")
 		fmt.Printf("To configure, run:\n")
-		fmt.Printf("  myskill config init\n")
-		fmt.Printf("  myskill config set-api-key <your-api-key>\n")
+		fmt.Printf("  zentao config init\n")
+		fmt.Printf("  zentao config set-api-key <your-api-key>\n")
 		return nil
 	}
 
@@ -123,7 +123,7 @@ func runConfigInit(cmd *cobra.Command, args []string) error {
 
 	if !configInteractive {
 		fmt.Printf("To set your API key, run:\n")
-		fmt.Printf("  myskill config set-api-key <your-api-key>\n")
+		fmt.Printf("  zentao config set-api-key <your-api-key>\n")
 		return nil
 	}
 

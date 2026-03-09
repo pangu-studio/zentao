@@ -29,7 +29,7 @@ This template provides a complete foundation for creating command-line skills wi
 
 ```bash
 # Clone this template
-git clone https://github.com/awesome-skill/template.git my-new-skill
+git clone https://github.com/awesome-skill/zentao.git my-new-skill
 cd my-new-skill
 
 # Initialize your skill
@@ -48,7 +48,7 @@ See [docs/CREATING_A_SKILL.md](docs/CREATING_A_SKILL.md) for detailed manual set
 ```
 .
 ├── cmd/
-│   └── myskill/              # CLI entry point
+│   └── zentao/              # CLI entry point
 │       ├── main.go           # Main entry
 │       └── cmd/              # Command implementations
 │           ├── root.go       # Root command
@@ -64,7 +64,7 @@ See [docs/CREATING_A_SKILL.md](docs/CREATING_A_SKILL.md) for detailed manual set
 │       ├── table.go          # Table formatter
 │       └── formatter_test.go # Formatter tests
 ├── skills/
-│   └── myskill/              # Skill definition
+│   └── zentao/              # Skill definition
 │       ├── SKILL.md          # Skill documentation template
 │       └── skill.toml        # Skill configuration template
 ├── docs/
@@ -226,7 +226,7 @@ type CustomConfig struct {
 
 ### Adding Commands
 
-Create a new file in `cmd/myskill/cmd/`:
+Create a new file in `cmd/zentao/cmd/`:
 
 ```go
 package cmd

@@ -1,4 +1,4 @@
-module github.com/awesome-skill/template
+module github.com/awesome-skill/zentao
 
 go 1.25.5
 

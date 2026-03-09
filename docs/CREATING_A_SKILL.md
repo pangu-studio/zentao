@@ -28,8 +28,8 @@ Replace the following placeholder values throughout the project:
 
 | Placeholder | Replace With | Example |
 |------------|--------------|---------|
-| `myskill` | Your skill name (lowercase) | `weatherapi` |
-| `github.com/awesome-skill/template` | Your Go module path | `github.com/yourname/weatherapi` |
+| `zentao` | Your skill name (lowercase) | `weatherapi` |
+| `github.com/awesome-skill/zentao` | Your Go module path | `github.com/yourname/weatherapi` |
 | `api.example.com` | Your default API host | `api.weatherapi.com` |
 
 ### Files to Update
@@ -48,14 +48,14 @@ Replace the following placeholder values throughout the project:
 
    - Update default API host in `LoadForSkill()` if needed
 
-3. **cmd/myskill/** (rename directory)
+3. **cmd/zentao/** (rename directory)
 
    ```bash
-   mv cmd/myskill cmd/yourskillname
+   mv cmd/zentao cmd/yourskillname
    ```
 
 4. **All import statements**
-   - Update all imports from `github.com/awesome-skill/template` to your module path
+   - Update all imports from `github.com/awesome-skill/zentao` to your module path
    - Find and replace across all `.go` files
 
 5. **Makefile**
@@ -404,7 +404,7 @@ go test -v -run TestName ./path/to/package
 
 - Check `AGENTS.md` for development guidelines
 - Review `docs/FRAMEWORK_GUIDE.md` for framework details
-- See the example command in `cmd/myskill/cmd/example.go`
+- See the example command in `cmd/zentao/cmd/example.go`
 
 ---
 

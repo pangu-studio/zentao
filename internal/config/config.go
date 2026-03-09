@@ -10,8 +10,7 @@ import (
 )
 
 // SkillName is the name of the skill
-// TODO: Replace "myskill" with your actual skill name
-const SkillName = "myskill"
+const SkillName = "zentao"
 
 // Config holds the application configuration
 type Config struct {

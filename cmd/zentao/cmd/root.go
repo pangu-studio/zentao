@@ -15,7 +15,7 @@ var (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "myskill",
+	Use:   "zentao",
 	Short: "A CLI tool template for skill development",
 	Long: `A template for building command-line skills with Cobra.
 
@@ -24,7 +24,7 @@ This template provides:
 - Multiple output formats (text, json, table)
 - Command structure and examples
 
-Replace "myskill" with your actual skill name and implement your commands.`,
+Replace "zentao" with your actual skill name and implement your commands.`,
 	Version: "0.1.0",
 }
 

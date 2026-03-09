@@ -13,8 +13,8 @@ import (
 func TestLoad_FromEnv(t *testing.T) {
 	// Arrange
 	expectedKey := "test-api-key-from-env"
-	os.Setenv("MYSKILL_API_KEY", expectedKey)
-	defer os.Unsetenv("MYSKILL_API_KEY")
+	os.Setenv("ZENTAO_API_KEY", expectedKey)
+	defer os.Unsetenv("ZENTAO_API_KEY")
 
 	// Act
 	config, err := Load()
@@ -29,10 +29,10 @@ func TestLoad_CustomAPIHost(t *testing.T) {
 	// Arrange
 	expectedKey := "test-api-key"
 	expectedHost := "api.production.com"
-	os.Setenv("MYSKILL_API_KEY", expectedKey)
-	os.Setenv("MYSKILL_API_HOST", expectedHost)
-	defer os.Unsetenv("MYSKILL_API_KEY")
-	defer os.Unsetenv("MYSKILL_API_HOST")
+	os.Setenv("ZENTAO_API_KEY", expectedKey)
+	os.Setenv("ZENTAO_API_HOST", expectedHost)
+	defer os.Unsetenv("ZENTAO_API_KEY")
+	defer os.Unsetenv("ZENTAO_API_HOST")
 
 	// Act
 	config, err := Load()
@@ -46,7 +46,7 @@ func TestLoad_CustomAPIHost(t *testing.T) {
 func TestLoad_FromFile(t *testing.T) {
 	// Arrange
 	tmpDir := t.TempDir()
-	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "zentao")
 	require.NoError(t, os.MkdirAll(configDir, 0755))
 
 	expectedKey := "test-api-key-from-file"
@@ -59,7 +59,7 @@ func TestLoad_FromFile(t *testing.T) {
 	defer os.Setenv("HOME", originalHome)
 
 	// Ensure no env var interferes
-	os.Unsetenv("MYSKILL_API_KEY")
+	os.Unsetenv("ZENTAO_API_KEY")
 
 	// Act
 	config, err := Load()
@@ -72,7 +72,7 @@ func TestLoad_FromFile(t *testing.T) {
 func TestLoad_FileWithWhitespace(t *testing.T) {
 	// Arrange
 	tmpDir := t.TempDir()
-	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "zentao")
 	require.NoError(t, os.MkdirAll(configDir, 0755))
 
 	expectedKey := "test-api-key-trimmed"
@@ -84,7 +84,7 @@ func TestLoad_FileWithWhitespace(t *testing.T) {
 	os.Setenv("HOME", tmpDir)
 	defer os.Setenv("HOME", originalHome)
 
-	os.Unsetenv("MYSKILL_API_KEY")
+	os.Unsetenv("ZENTAO_API_KEY")
 
 	// Act
 	config, err := Load()
@@ -97,7 +97,7 @@ func TestLoad_FileWithWhitespace(t *testing.T) {
 func TestLoad_EnvPriority(t *testing.T) {
 	// Arrange
 	tmpDir := t.TempDir()
-	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "zentao")
 	require.NoError(t, os.MkdirAll(configDir, 0755))
 
 	fileKey := "file-key"
@@ -110,8 +110,8 @@ func TestLoad_EnvPriority(t *testing.T) {
 	os.Setenv("HOME", tmpDir)
 	defer os.Setenv("HOME", originalHome)
 
-	os.Setenv("MYSKILL_API_KEY", envKey)
-	defer os.Unsetenv("MYSKILL_API_KEY")
+	os.Setenv("ZENTAO_API_KEY", envKey)
+	defer os.Unsetenv("ZENTAO_API_KEY")
 
 	// Act
 	config, err := Load()
@@ -128,21 +128,21 @@ func TestLoad_NoAPIKey(t *testing.T) {
 	os.Setenv("HOME", tmpDir)
 	defer os.Setenv("HOME", originalHome)
 
-	os.Unsetenv("MYSKILL_API_KEY")
+	os.Unsetenv("ZENTAO_API_KEY")
 
 	// Act
 	config, err := Load()
 
 	// Assert
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "API API key not found")
+	assert.Contains(t, err.Error(), "API key not found")
 	assert.Nil(t, config)
 }
 
 func TestLoad_EmptyAPIKeyFile(t *testing.T) {
 	// Arrange
 	tmpDir := t.TempDir()
-	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "zentao")
 	require.NoError(t, os.MkdirAll(configDir, 0755))
 
 	apiKeyFile := filepath.Join(configDir, "api_key")
@@ -152,7 +152,7 @@ func TestLoad_EmptyAPIKeyFile(t *testing.T) {
 	os.Setenv("HOME", tmpDir)
 	defer os.Setenv("HOME", originalHome)
 
-	os.Unsetenv("MYSKILL_API_KEY")
+	os.Unsetenv("ZENTAO_API_KEY")
 
 	// Act
 	config, err := Load()
@@ -167,7 +167,7 @@ func TestLoad_XDGConfigHome(t *testing.T) {
 	// Arrange
 	tmpDir := t.TempDir()
 	xdgConfig := filepath.Join(tmpDir, "custom-config")
-	configDir := filepath.Join(xdgConfig, "awesome-skill", "myskill")
+	configDir := filepath.Join(xdgConfig, "awesome-skill", "zentao")
 	require.NoError(t, os.MkdirAll(configDir, 0755))
 
 	expectedKey := "test-xdg-key"
@@ -177,7 +177,7 @@ func TestLoad_XDGConfigHome(t *testing.T) {
 	os.Setenv("XDG_CONFIG_HOME", xdgConfig)
 	defer os.Unsetenv("XDG_CONFIG_HOME")
 
-	os.Unsetenv("MYSKILL_API_KEY")
+	os.Unsetenv("ZENTAO_API_KEY")
 
 	// Act
 	config, err := Load()
@@ -202,7 +202,7 @@ func TestEnsureConfigDir(t *testing.T) {
 	require.NoError(t, err)
 
 	// Verify directory exists
-	expectedDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	expectedDir := filepath.Join(tmpDir, ".config", "awesome-skill", "zentao")
 	info, err := os.Stat(expectedDir)
 	require.NoError(t, err)
 	assert.True(t, info.IsDir())
@@ -214,7 +214,7 @@ func TestEnsureConfigDir(t *testing.T) {
 func TestEnsureConfigDir_AlreadyExists(t *testing.T) {
 	// Arrange
 	tmpDir := t.TempDir()
-	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "zentao")
 	require.NoError(t, os.MkdirAll(configDir, 0755))
 
 	originalHome := os.Getenv("HOME")
@@ -243,7 +243,7 @@ func TestEnsureConfigDir_XDGConfigHome(t *testing.T) {
 	require.NoError(t, err)
 
 	// Verify directory exists in XDG location
-	expectedDir := filepath.Join(xdgConfig, "awesome-skill", "myskill")
+	expectedDir := filepath.Join(xdgConfig, "awesome-skill", "zentao")
 	info, err := os.Stat(expectedDir)
 	require.NoError(t, err)
 	assert.True(t, info.IsDir())
@@ -252,11 +252,11 @@ func TestEnsureConfigDir_XDGConfigHome(t *testing.T) {
 func TestLoad_APIHostFromFile(t *testing.T) {
 	// Arrange
 	tmpDir := t.TempDir()
-	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "zentao")
 	require.NoError(t, os.MkdirAll(configDir, 0755))
 
 	expectedKey := "test-api-key"
-	expectedHost := "api.myskill.com"
+	expectedHost := "api.zentao.com"
 
 	apiKeyFile := filepath.Join(configDir, "api_key")
 	require.NoError(t, os.WriteFile(apiKeyFile, []byte(expectedKey), 0600))
@@ -268,8 +268,8 @@ func TestLoad_APIHostFromFile(t *testing.T) {
 	os.Setenv("HOME", tmpDir)
 	defer os.Setenv("HOME", originalHome)
 
-	os.Unsetenv("MYSKILL_API_KEY")
-	os.Unsetenv("MYSKILL_API_HOST")
+	os.Unsetenv("ZENTAO_API_KEY")
+	os.Unsetenv("ZENTAO_API_HOST")
 
 	// Act
 	config, err := Load()
@@ -283,7 +283,7 @@ func TestLoad_APIHostFromFile(t *testing.T) {
 func TestLoad_APIHostEnvPriority(t *testing.T) {
 	// Arrange
 	tmpDir := t.TempDir()
-	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "zentao")
 	require.NoError(t, os.MkdirAll(configDir, 0755))
 
 	expectedKey := "test-api-key"
@@ -300,9 +300,9 @@ func TestLoad_APIHostEnvPriority(t *testing.T) {
 	os.Setenv("HOME", tmpDir)
 	defer os.Setenv("HOME", originalHome)
 
-	os.Unsetenv("MYSKILL_API_KEY")
-	os.Setenv("MYSKILL_API_HOST", envHost)
-	defer os.Unsetenv("MYSKILL_API_HOST")
+	os.Unsetenv("ZENTAO_API_KEY")
+	os.Setenv("ZENTAO_API_HOST", envHost)
+	defer os.Unsetenv("ZENTAO_API_HOST")
 
 	// Act
 	config, err := Load()
@@ -316,7 +316,7 @@ func TestLoad_APIHostEnvPriority(t *testing.T) {
 func TestLoad_APIHostFilePriority(t *testing.T) {
 	// Arrange
 	tmpDir := t.TempDir()
-	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill")
+	configDir := filepath.Join(tmpDir, ".config", "awesome-skill", "zentao")
 	require.NoError(t, os.MkdirAll(configDir, 0755))
 
 	expectedKey := "test-api-key"
@@ -332,8 +332,8 @@ func TestLoad_APIHostFilePriority(t *testing.T) {
 	os.Setenv("HOME", tmpDir)
 	defer os.Setenv("HOME", originalHome)
 
-	os.Unsetenv("MYSKILL_API_KEY")
-	os.Unsetenv("MYSKILL_API_HOST")
+	os.Unsetenv("ZENTAO_API_KEY")
+	os.Unsetenv("ZENTAO_API_HOST")
 
 	// Act
 	config, err := Load()
@@ -359,7 +359,7 @@ func TestSetAPIKey(t *testing.T) {
 	// Assert
 	require.NoError(t, err)
 
-	apiKeyPath := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill", "api_key")
+	apiKeyPath := filepath.Join(tmpDir, ".config", "awesome-skill", "zentao", "api_key")
 	actualKey, err := os.ReadFile(apiKeyPath)
 	require.NoError(t, err)
 	assert.Equal(t, expectedKey, strings.TrimSpace(string(actualKey)))
@@ -372,7 +372,7 @@ func TestSetAPIHost(t *testing.T) {
 	os.Setenv("HOME", tmpDir)
 	defer os.Setenv("HOME", originalHome)
 
-	expectedHost := "api.myskill.com"
+	expectedHost := "api.zentao.com"
 
 	// Act
 	err := SetAPIHost(expectedHost)
@@ -380,7 +380,7 @@ func TestSetAPIHost(t *testing.T) {
 	// Assert
 	require.NoError(t, err)
 
-	apiHostPath := filepath.Join(tmpDir, ".config", "awesome-skill", "myskill", "api_host")
+	apiHostPath := filepath.Join(tmpDir, ".config", "awesome-skill", "zentao", "api_host")
 	actualHost, err := os.ReadFile(apiHostPath)
 	require.NoError(t, err)
 	assert.Equal(t, expectedHost, strings.TrimSpace(string(actualHost)))

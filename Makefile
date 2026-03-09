@@ -2,7 +2,7 @@
 
 # Variables
 BINARY_DIR := bin
-BINARIES := myskill
+BINARIES := zentao
 GO := go
 GOFLAGS := -v
 GOPATH := $(shell go env GOPATH)
@@ -10,7 +10,7 @@ GOPATH := $(shell go env GOPATH)
 # Cross-compilation variables
 GOOS_LINUX := linux
 GOARCH_AMD64 := amd64
-BINARY_LINUX := myskill-linux-amd64
+BINARY_LINUX := zentao-linux-amd64
 
 # Default target
 all: build
@@ -29,7 +29,7 @@ build:
 build-linux:
 	@echo "Building for Linux amd64..."
 	@mkdir -p $(BINARY_DIR)
-	GOOS=$(GOOS_LINUX) GOARCH=$(GOARCH_AMD64) $(GO) build $(GOFLAGS) -o $(BINARY_DIR)/$(BINARY_LINUX) ./cmd/myskill
+	GOOS=$(GOOS_LINUX) GOARCH=$(GOARCH_AMD64) $(GO) build $(GOFLAGS) -o $(BINARY_DIR)/$(BINARY_LINUX) ./cmd/zentao
 	@echo "Linux binary built: $(BINARY_DIR)/$(BINARY_LINUX)"
 
 # Install CLIs to system
